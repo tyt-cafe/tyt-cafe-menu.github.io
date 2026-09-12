@@ -756,28 +756,46 @@ html[dir="rtl"] .mobile-menu.open a { transform: translateX(0); }
 .menu-search {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 10px;
-  max-width: 380px;
+  max-width: 440px;
   width: 100%;
   margin: 0 auto;
-  border-bottom: 1px solid var(--border-strong);
-  padding: 6px 4px 12px;
-  transition: border-color 0.3s ease;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  padding: 12px 16px;
+  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
-.menu-search:focus-within { border-color: var(--secondary); }
+.menu-search:focus-within { border-color: var(--gold-border); background: var(--surface-2); box-shadow: 0 0 0 3px rgba(217,164,65,0.10); }
 .menu-search input {
   background: none; border: none; outline: none;
   color: var(--text);
-  font-family: var(--font-display);
-  font-style: italic;
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: 15px;
   width: 100%;
-  text-align: center;
+  text-align: left;
+  min-width: 0;
 }
 .menu-search input::placeholder { color: var(--muted-2); }
-.menu-search svg { flex-shrink: 0; opacity: 0.5; color: var(--secondary-light); }
+.menu-search svg { flex-shrink: 0; opacity: 0.55; color: var(--secondary-light); }
+.menu-search-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: var(--muted);
+  background: rgba(255,255,255,0.06);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.menu-search-clear svg { width: 12px; height: 12px; }
+.menu-search-clear:hover { color: var(--text); background: rgba(255,255,255,0.12); }
+.menu-search-clear:active { transform: scale(0.9); }
+.menu-search-clear[hidden] { display: none; }
+html[dir="rtl"] .menu-search input { text-align: right; }
 
 .menu-tabs-wrap { position: relative; }
 .menu-tabs-wrap::before, .menu-tabs-wrap::after {
@@ -792,10 +810,10 @@ html[dir="rtl"] .mobile-menu.open a { transform: translateX(0); }
 .menu-tabs-wrap::after { right: 0; background: linear-gradient(270deg, rgba(14,9,22,0.88), transparent); }
 .menu-tabs {
   display: flex;
-  gap: 2px;
+  gap: 8px;
   overflow-x: auto;
   scrollbar-width: none;
-  padding: 2px 6px;
+  padding: 2px 6px 6px;
   scroll-behavior: smooth;
   cursor: grab;
 }
@@ -805,35 +823,31 @@ html[dir="rtl"] .mobile-menu.open a { transform: translateX(0); }
 .menu-tab {
   position: relative;
   flex-shrink: 0;
-  padding: 11px 16px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
   font-family: var(--font-body);
   font-size: 11.5px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
   white-space: nowrap;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
 }
-.menu-tab::after {
-  content: '';
-  position: absolute;
-  left: 14px; right: 14px; bottom: 2px;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, var(--secondary-light), var(--secondary));
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform 0.35s var(--ease);
+.menu-tab:hover { color: var(--text); border-color: var(--border-strong); }
+.menu-tab.active {
+  color: #241205;
+  background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
+  border-color: transparent;
+  box-shadow: 0 6px 16px rgba(217,164,65,0.28);
 }
-.menu-tab:hover { color: var(--text); }
-.menu-tab.active { color: var(--secondary-light); }
-.menu-tab.active::after { transform: scaleX(1); }
 
 /* ---- Category groups: large editorial numbering above a card grid ---- */
 #menuContainer { max-width: 1180px; margin: 0 auto; touch-action: pan-y; cursor: grab; user-select: none; }
 #menuContainer:active { cursor: grabbing; }
-.menu-category { margin-bottom: 88px; scroll-margin-top: 190px; }
+.menu-category { margin-bottom: 56px; scroll-margin-top: 190px; }
 .menu-category:last-child { margin-bottom: 20px; }
 .menu-category-head {
   display: flex;
@@ -877,24 +891,29 @@ html[dir="rtl"] .mobile-menu.open a { transform: translateX(0); }
   white-space: nowrap;
 }
 
-/* ---- Item cards: image tile + name — leader — price, grid layout ---- */
+/* ---- Item cards: large top photo + name/price beneath, app-style grid ---- */
 .menu-list {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+@media (min-width: 620px) {
+  .menu-list { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+}
+@media (min-width: 980px) {
+  .menu-list { grid-template-columns: repeat(4, 1fr); }
 }
 .menu-item {
   position: relative;
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
+  flex-direction: column;
   width: 100%;
-  padding: 20px;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
   cursor: pointer;
   text-align: left;
+  overflow: hidden;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.4s var(--ease), border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
 }
@@ -904,45 +923,63 @@ html[dir="rtl"] .mobile-menu.open a { transform: translateX(0); }
   transform: translateY(-3px);
   box-shadow: var(--shadow-card);
 }
-.menu-item:active { transform: translateY(-1px); }
+.menu-item:active { transform: translateY(-1px) scale(0.99); }
 .menu-item:focus-visible {
   outline: 2px solid var(--secondary);
   outline-offset: 2px;
 }
 
-/* Image slot: a large rounded tile carrying the category's line-icon — a
-   deliberate, honest stand-in for future product photography rather than
-   a placeholder box pretending to be a broken image. */
-.menu-item-media { position: relative; flex-shrink: 0; }
+/* Image slot: a full-width, consistently-proportioned photo tile. Items
+   without product photography fall back to the category's line-icon on a
+   soft brand gradient — a deliberate, honest stand-in rather than a
+   placeholder box pretending to be a broken image. */
+.menu-item-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 32% 28%, var(--primary-deep), var(--surface) 78%);
+}
 .menu-item-icon {
-  width: 112px;
-  height: 112px;
-  border-radius: var(--radius-md);
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 32% 28%, var(--primary-deep), var(--surface) 78%);
-  border: 1px solid var(--purple-border);
   color: var(--secondary-light);
   opacity: 0.85;
-  overflow: hidden;
-  transition: transform 0.4s var(--ease), opacity 0.4s ease, border-color 0.4s ease;
 }
-.menu-item-icon svg { width: 38px; height: 38px; }
-.menu-item-icon img { width: 100%; height: 100%; object-fit: cover; }
-.menu-item:hover .menu-item-icon { transform: scale(1.05); opacity: 1; border-color: var(--gold-border); }
+.menu-item-icon svg { width: 34%; height: 34%; max-width: 46px; max-height: 46px; }
+.menu-item-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease);
+}
+.menu-item:hover .menu-item-icon img { transform: scale(1.06); }
+.menu-item:hover .menu-item-icon { opacity: 1; }
 
-.menu-item-body { flex: 1; min-width: 0; }
+.menu-item-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px 14px;
+}
 .menu-item-row {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px 10px;
 }
 .menu-item-name {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 17.5px;
+  font-size: 15.5px;
+  line-height: 1.25;
   color: var(--text);
   letter-spacing: 0.002em;
   transition: color 0.3s ease;
@@ -954,8 +991,9 @@ html[dir="rtl"] .mobile-menu.open a { transform: translateX(0); }
    a small solid pill on the corner of the image tile. */
 .menu-item-badge {
   position: absolute;
-  top: -8px;
-  left: -8px;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
   display: inline-block;
   padding: 4px 9px;
   border-radius: 999px;
@@ -1003,27 +1041,29 @@ html[dir="rtl"] .mobile-menu.open a { transform: translateX(0); }
    modal. */
 .menu-item-fav {
   position: absolute;
-  bottom: -8px;
-  right: -8px;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: var(--surface-2, var(--surface));
-  border: 1px solid var(--border-strong);
-  color: var(--muted);
+  background: rgba(10, 6, 17, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(248,244,236,0.85);
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
   transition: transform 0.25s var(--ease), color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
 }
 .menu-item-fav svg {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.6;
+  stroke-width: 1.8;
   transition: fill 0.25s ease;
 }
 .menu-item-fav:hover { color: var(--secondary-light); border-color: var(--gold-border); transform: scale(1.08); }
@@ -1050,20 +1090,14 @@ html[dir="rtl"] .mobile-menu.open a { transform: translateX(0); }
 .menu-tab--fav.active svg { fill: currentColor; }
 
 
-.menu-item-dots {
-  flex: 1;
-  min-width: 12px;
-  border-bottom: 1px dotted var(--border-strong);
-  transform: translateY(-5px);
-  transition: border-color 0.3s ease;
-}
-.menu-item:hover .menu-item-dots { border-color: var(--gold-border); }
+/* Dotted leader made sense in the old row layout; the card layout puts
+   name and price on their own line with natural spacing instead. */
+.menu-item-dots { display: none; }
 
 .menu-item-desc {
-  font-size: 12.5px;
+  font-size: 11.5px;
   color: var(--muted);
-  margin-top: 7px;
-  line-height: 1.6;
+  line-height: 1.55;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -1071,15 +1105,15 @@ html[dir="rtl"] .mobile-menu.open a { transform: translateX(0); }
 }
 .menu-item-price {
   font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 15px;
+  font-weight: 600;
+  font-size: 14px;
   color: var(--secondary);
   white-space: nowrap;
   flex-shrink: 0;
   transition: color 0.3s ease;
 }
 .menu-item:hover .menu-item-price { color: var(--secondary-light); }
-.menu-item-price::after { content: ' EGP'; font-size: 9px; font-family: var(--font-body); font-weight: 700; opacity: 0.6; }
+.menu-item-price::after { content: ' EGP'; font-size: 8.5px; font-family: var(--font-body); font-weight: 700; opacity: 0.6; }
 
 /* Brief highlight when a "View in menu" link from Best Sellers lands on a
    row, so the user immediately sees which item they were taken to. */
@@ -1170,19 +1204,23 @@ html[dir="rtl"] .mobile-menu.open a { transform: translateX(0); }
   color: var(--text);
   transition: background 0.25s ease, transform 0.25s ease;
 }
+.item-modal-close { background: rgba(10, 6, 17, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
 .item-modal-close:hover { background: var(--primary-dim); transform: rotate(90deg); }
 .item-modal-close svg { width: 15px; height: 15px; }
+/* Hero product photo: bleeds to the modal's top edge/corners so the quick
+   view leads with a large image, matching the redesigned menu cards. */
 .item-modal-icon {
-  width: 60px; height: 60px;
-  border-radius: 50%;
+  width: calc(100% + 56px);
+  aspect-ratio: 4 / 3;
+  margin: -34px -28px 20px -28px;
+  border-radius: 26px 26px 0 0;
   display: flex; align-items: center; justify-content: center;
   background: radial-gradient(circle at 32% 28%, var(--primary-deep), var(--surface) 78%);
-  border: 1px solid var(--purple-border);
+  border: none;
   color: var(--secondary-light);
-  margin-bottom: 20px;
   overflow: hidden;
 }
-.item-modal-icon svg { width: 27px; height: 27px; }
+.item-modal-icon svg { width: 54px; height: 54px; }
 .item-modal-icon img { width: 100%; height: 100%; object-fit: cover; }
 .item-modal-category {
   font-size: 11.5px;
@@ -1683,7 +1721,6 @@ html[dir="rtl"] .mobile-menu.open a { transform: translateX(0); }
   .find-grid { grid-template-columns: 1fr; }
   .footer-top { grid-template-columns: 1fr; gap: 40px; }
   .offers-grid { grid-template-columns: repeat(2, 1fr); }
-  .menu-list { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 760px) {
@@ -1704,13 +1741,9 @@ html[dir="rtl"] .mobile-menu.open a { transform: translateX(0); }
   .offers-grid { grid-template-columns: 1fr; }
   .section-title { font-size: 32px; }
   .footer-bottom { flex-direction: column; align-items: flex-start; }
-  .menu-list { grid-template-columns: 1fr; gap: 14px; }
-  .menu-item { padding: 16px; gap: 14px; }
-  .menu-item-icon { width: 84px; height: 84px; }
-  .menu-item-icon svg { width: 28px; height: 28px; }
-  .menu-item-name { font-size: 16.5px; }
   .menu-item:hover { transform: none; }
   .item-modal { padding: 30px 22px 26px; max-height: 82vh; }
+  .item-modal-icon { width: calc(100% + 44px); margin: -30px -22px 18px -22px; }
   .item-modal-name { font-size: 22px; padding-right: 26px; }
   .item-modal-foot { flex-wrap: wrap; }
   .item-modal-note { max-width: 100%; text-align: left; }
@@ -1830,8 +1863,8 @@ html[dir="rtl"] .about-quote {
   border-right: 3px solid var(--secondary);
 }
 html[dir="rtl"] .menu-item { text-align: right; }
-html[dir="rtl"] .menu-item-badge { left: auto; right: -8px; }
-html[dir="rtl"] .menu-item-fav { right: auto; left: -8px; }
+html[dir="rtl"] .menu-item-badge { left: auto; right: 8px; }
+html[dir="rtl"] .menu-item-fav { right: auto; left: 8px; }
 html[dir="rtl"] .item-modal-close { right: auto; left: 18px; }
 html[dir="rtl"] .item-modal-name { padding-right: 0; padding-left: 30px; }
 html[dir="rtl"] .item-modal-note { text-align: left; }

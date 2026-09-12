@@ -114,7 +114,21 @@
   const menuContainer = document.getElementById("menuContainer");
   const menuTabs = document.getElementById("menuTabs");
   const menuSearch = document.getElementById("menuSearch");
+  const menuSearchClear = document.getElementById("menuSearchClear");
   const menuEmpty = document.getElementById("menuEmpty");
+
+  /* Search clear (×) button: purely a UI convenience on top of the
+     existing search input — doesn't touch the filter logic itself. */
+  if (menuSearch && menuSearchClear) {
+    const syncClearBtn = () => { menuSearchClear.hidden = !menuSearch.value; };
+    menuSearch.addEventListener("input", syncClearBtn);
+    menuSearchClear.addEventListener("click", () => {
+      menuSearch.value = "";
+      menuSearch.dispatchEvent(new Event("input"));
+      menuSearch.focus();
+    });
+    syncClearBtn();
+  }
 
   let activeCategory = "all";
   let menuSource = (typeof MENU_DATA !== "undefined") ? MENU_DATA : [];
