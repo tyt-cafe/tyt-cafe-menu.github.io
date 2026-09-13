@@ -131,10 +131,29 @@
     <div class="section-head center" data-reveal>
       <span class="eyebrow" data-i18n="comments.eyebrow">Guestbook</span>
       <h2 class="section-title" data-i18n-html="comments.title">Tell us<br /><em>what you think.</em></h2>
-      <p class="section-lede" data-reveal="delay-1" data-i18n="comments.lede">Leave a comment about TYT — your visit, your favorite drink, anything at all.</p>
+      <p class="section-lede" data-reveal="delay-1" data-i18n="comments.lede">Leave a comment and a rating about TYT — your visit, your favorite drink, anything at all.</p>
+    </div>
+
+    <div class="rating-summary" id="ratingSummary" hidden>
+      <span class="rating-summary-score" id="ratingSummaryScore">0.0</span>
+      <div class="rating-summary-details">
+        <span class="star-rating" id="ratingSummaryStars"></span>
+        <span class="rating-summary-count" id="ratingSummaryCount"></span>
+      </div>
     </div>
 
     <form class="comment-form" id="commentForm" data-reveal="delay-1">
+      <div class="rating-picker">
+        <span class="rating-picker-label" data-i18n="comments.ratingLabel">Your rating</span>
+        <div class="rating-picker-stars" id="ratingPicker" role="radiogroup" aria-label="Rating">
+          <span class="rating-picker-star" data-value="1" role="radio" aria-checked="false" tabindex="0"><svg viewBox="0 0 24 24"><path d="M12 2.5 15.09 8.76 22 9.77 17 14.64 18.18 21.52 12 18.27 5.82 21.52 7 14.64 2 9.77 8.91 8.76 12 2.5Z"/></svg></span>
+          <span class="rating-picker-star" data-value="2" role="radio" aria-checked="false" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M12 2.5 15.09 8.76 22 9.77 17 14.64 18.18 21.52 12 18.27 5.82 21.52 7 14.64 2 9.77 8.91 8.76 12 2.5Z"/></svg></span>
+          <span class="rating-picker-star" data-value="3" role="radio" aria-checked="false" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M12 2.5 15.09 8.76 22 9.77 17 14.64 18.18 21.52 12 18.27 5.82 21.52 7 14.64 2 9.77 8.91 8.76 12 2.5Z"/></svg></span>
+          <span class="rating-picker-star" data-value="4" role="radio" aria-checked="false" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M12 2.5 15.09 8.76 22 9.77 17 14.64 18.18 21.52 12 18.27 5.82 21.52 7 14.64 2 9.77 8.91 8.76 12 2.5Z"/></svg></span>
+          <span class="rating-picker-star" data-value="5" role="radio" aria-checked="false" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M12 2.5 15.09 8.76 22 9.77 17 14.64 18.18 21.52 12 18.27 5.82 21.52 7 14.64 2 9.77 8.91 8.76 12 2.5Z"/></svg></span>
+        </div>
+        <input type="hidden" id="commentRating" value="0" />
+      </div>
       <input type="text" id="commentName" class="comment-input" maxlength="40" required
         placeholder="Your name" data-i18n-placeholder="comments.namePlaceholder" aria-label="Your name" />
       <textarea id="commentMessage" class="comment-textarea" maxlength="500" rows="3" required
@@ -171,7 +190,9 @@
 <script src="js/offers-data.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/menu-app.js"></script>
-<script type="module" src="js/comments.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script src="js/comments.js"></script>
 <script src="js/page-nav.js"></script>
 </body>
 </html>
