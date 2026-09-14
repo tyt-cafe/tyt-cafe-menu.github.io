@@ -78,7 +78,7 @@
     <div class="hero-actions">
       <a href="#menu" class="btn btn-primary" data-i18n="nav.viewMenu">View Menu</a>
       <a href="#offers" class="btn btn-ghost-dark" data-i18n="nav.offers">Offers</a>
-      <a href="#comments" class="btn btn-ghost-dark" data-i18n="nav.comments">Comments</a>
+      <a href="#comments" class="btn btn-ghost-dark" data-i18n="nav.comments">Reviews</a>
     </div>
   </div>
 </section>
@@ -125,13 +125,13 @@
   </div>
 </section>
 
-<!-- ============================= COMMENTS (GUESTBOOK) ============================= -->
+<!-- ============================= REVIEWS ============================= -->
 <section class="comments-section" id="comments">
   <div class="container">
     <div class="section-head center" data-reveal>
-      <span class="eyebrow" data-i18n="comments.eyebrow">Guestbook</span>
+      <span class="eyebrow" data-i18n="comments.eyebrow">Reviews</span>
       <h2 class="section-title" data-i18n-html="comments.title">Tell us<br /><em>what you think.</em></h2>
-      <p class="section-lede" data-reveal="delay-1" data-i18n="comments.lede">Leave a comment and a rating about TYT — your visit, your favorite drink, anything at all.</p>
+      <p class="section-lede" data-reveal="delay-1" data-i18n="comments.lede">Leave a review and a rating about TYT — your visit, your favorite drink, anything at all.</p>
     </div>
 
     <div class="rating-summary" id="ratingSummary" hidden>
@@ -157,15 +157,15 @@
       <input type="text" id="commentName" class="comment-input" maxlength="40" required
         placeholder="Your name" data-i18n-placeholder="comments.namePlaceholder" aria-label="Your name" />
       <textarea id="commentMessage" class="comment-textarea" maxlength="500" rows="3" required
-        placeholder="Write your comment…" data-i18n-placeholder="comments.messagePlaceholder" aria-label="Your comment"></textarea>
+        placeholder="Write your review…" data-i18n-placeholder="comments.messagePlaceholder" aria-label="Your review"></textarea>
       <div class="comment-form-foot">
         <p class="comment-status" id="commentStatus" role="status"></p>
-        <button type="submit" class="btn btn-primary" id="commentSubmitBtn" data-i18n="comments.submit">Post Comment</button>
+        <button type="submit" class="btn btn-primary" id="commentSubmitBtn" data-i18n="comments.submit">Post Review</button>
       </div>
     </form>
 
     <div class="comments-list" id="commentsList"></div>
-    <p class="comments-empty" id="commentsEmpty" data-i18n="comments.empty">No comments yet — be the first to say hi!</p>
+    <p class="comments-empty" id="commentsEmpty" data-i18n="comments.empty">No reviews yet — be the first to say hi!</p>
   </div>
 </section>
 

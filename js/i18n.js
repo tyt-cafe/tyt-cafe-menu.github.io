@@ -90,23 +90,23 @@
       "offers.lede": "Grab one of our current specials, or check back — new drops land here often.",
       "offers.note": "Offers shown are current promotions and may change without notice.",
 
-      "nav.comments": "Comments",
-      "comments.eyebrow": "Guestbook",
+      "nav.comments": "Reviews",
+      "comments.eyebrow": "Reviews",
       "comments.title": "Tell us<br /><em>what you think.</em>",
-      "comments.lede": "Leave a comment and a rating about TYT — your visit, your favorite drink, anything at all.",
+      "comments.lede": "Leave a review and a rating about TYT — your visit, your favorite drink, anything at all.",
       "comments.ratingLabel": "Your rating",
       "comments.namePlaceholder": "Your name",
-      "comments.messagePlaceholder": "Write your comment…",
-      "comments.submit": "Post Comment",
+      "comments.messagePlaceholder": "Write your review…",
+      "comments.submit": "Post Review",
       "comments.submitting": "Posting…",
-      "comments.success": "Thanks! Your comment has been posted.",
+      "comments.success": "Thanks! Your review has been posted.",
       "comments.error": "Something went wrong — please try again.",
-      "comments.errorFields": "Please fill in your name and comment.",
+      "comments.errorFields": "Please fill in your name and review.",
       "comments.errorRating": "Please choose a star rating.",
-      "comments.empty": "No comments yet — be the first to say hi!",
+      "comments.empty": "No reviews yet — be the first to say hi!",
       "comments.ratingCountOne": "based on 1 review",
       "comments.ratingCountMany": "based on {n} reviews",
-      "comments.loading": "Loading comments…",
+      "comments.loading": "Loading reviews…",
 
       "gallery.eyebrow": "Gallery",
       "gallery.title": "A little look<br /><em>inside TYT.</em>",
@@ -209,23 +209,23 @@
       "offers.lede": "اختار واحد من عروضنا الحالية، أو ارجع تاني — عروض جديدة بتنزل هنا باستمرار.",
       "offers.note": "العروض المعروضة هي العروض الحالية وممكن تتغير من غير إشعار مسبق.",
 
-      "nav.comments": "التعليقات",
-      "comments.eyebrow": "آراء الزوار",
+      "nav.comments": "التقييمات",
+      "comments.eyebrow": "التقييمات",
       "comments.title": "قولّنا<br /><em>رأيك إيه.</em>",
-      "comments.lede": "اترك تعليق وتقييم عن TYT — زيارتك، مشروبك المفضل، أو أي حاجة تحب تقولها.",
+      "comments.lede": "اترك تقييمك عن TYT — زيارتك، مشروبك المفضل، أو أي حاجة تحب تقولها.",
       "comments.ratingLabel": "تقييمك",
       "comments.namePlaceholder": "اسمك",
-      "comments.messagePlaceholder": "اكتب تعليقك…",
-      "comments.submit": "انشر التعليق",
+      "comments.messagePlaceholder": "اكتب تقييمك…",
+      "comments.submit": "انشر التقييم",
       "comments.submitting": "جاري النشر…",
-      "comments.success": "شكرًا! تم نشر تعليقك.",
+      "comments.success": "شكرًا! تم نشر تقييمك.",
       "comments.error": "حصل خطأ — حاول تاني.",
-      "comments.errorFields": "من فضلك اكتب اسمك وتعليقك.",
+      "comments.errorFields": "من فضلك اكتب اسمك وتقييمك.",
       "comments.errorRating": "من فضلك اختار تقييم بالنجوم.",
-      "comments.empty": "لسه مفيش تعليقات — كن أول حد يسلّم علينا!",
+      "comments.empty": "لسه مفيش تقييمات — كن أول حد يسلّم علينا!",
       "comments.ratingCountOne": "بناءً على تقييم واحد",
       "comments.ratingCountMany": "بناءً على {n} تقييم",
-      "comments.loading": "جاري تحميل التعليقات…",
+      "comments.loading": "جاري تحميل التقييمات…",
 
       "gallery.eyebrow": "معرض الصور",
       "gallery.title": "لمحة سريعة<br /><em>من جوه TYT.</em>",
@@ -547,12 +547,15 @@
 
   function translateItem(catId, item) {
     if (currentLang !== "ar") return item;
+    var out = Object.assign({}, item);
+    // Prefer Arabic text saved per-item from the Admin Panel (works for
+    // every item, including ones added after the printed menu). Fall back
+    // to the bundled printed-menu translation dictionary, then to the
+    // original English text if neither is available.
     var key = catId + "::" + String(item.name || "").trim().toLowerCase();
     var tr = MENU_AR.items[key];
-    if (!tr) return item;
-    var out = Object.assign({}, item);
-    if (tr.name) out.name = tr.name;
-    if (tr.description) out.description = tr.description;
+    out.name = (item.nameAr && item.nameAr.trim()) || (tr && tr.name) || item.name;
+    out.description = (item.descriptionAr && item.descriptionAr.trim()) || (tr && tr.description) || item.description;
     return out;
   }
 

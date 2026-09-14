@@ -442,6 +442,19 @@
     return String(str ?? "").replace(/&/g, "&amp;").replace(/"/g, "&quot;");
   }
 
+  /* Search-friendly text: lowercases and folds Arabic hamza variants
+     (أ/إ/آ/ء/ؤ/ئ) onto their base letters, so searching "احمد" still
+     finds "أحمد" without the person needing to type the hamza. Used for
+     both the stored item text and whatever the person types. */
+  function searchNormalize(str) {
+    return String(str ?? "")
+      .toLowerCase()
+      .replace(/[أإآٱ]/g, "ا")
+      .replace(/ؤ/g, "و")
+      .replace(/ئ/g, "ي")
+      .replace(/ء/g, "");
+  }
+
   const BADGE_LABELS = { "new": "New", "best-seller": "⭐ Best Seller", "popular": "Popular" };
   function badgeHtml(item) {
     const key = String(item.badge || "none").trim().toLowerCase();
@@ -455,7 +468,7 @@
     const all = document.createElement("button");
     all.className = "menu-tab active";
     all.type = "button";
-    all.textContent = tt("menu.all", "All");
+    all.innerHTML = `${iconSvg("all")}<span>${tt("menu.all", "All")}</span>`;
     all.dataset.target = "all";
     all.setAttribute("role", "tab");
     all.setAttribute("aria-selected", "true");
@@ -475,7 +488,7 @@
       const tab = document.createElement("button");
       tab.className = "menu-tab";
       tab.type = "button";
-      tab.textContent = catL10n.name;
+      tab.innerHTML = `${iconSvg(cat.icon)}<span>${catL10n.name}</span>`;
       tab.dataset.target = cat.id;
       tab.setAttribute("role", "tab");
       tab.setAttribute("aria-selected", "false");
@@ -653,8 +666,8 @@
               const favKey = favKeyFor(cat, item);
               return `
             <button type="button" class="menu-item${isFavorite(favKey) ? " is-fav" : ""}"
-              data-name="${itemL10n.name.toLowerCase()}"
-              data-desc="${(itemL10n.description || "").toLowerCase()}"
+              data-name="${esc(searchNormalize(itemL10n.name))}"
+              data-desc="${esc(searchNormalize(itemL10n.description || ""))}"
               data-item-name="${esc(itemL10n.name)}"
               data-item-desc="${esc(itemL10n.description || "")}"
               data-item-price="${esc(item.price)}"
@@ -664,15 +677,14 @@
               <span class="menu-item-media">
                 <span class="menu-item-icon">${item.image ? `<img src="${esc(item.image)}" alt="" loading="lazy">` : iconSvg(cat.icon)}</span>
                 ${badgeHtml(item)}
-                ${favButtonHtml(favKey)}
               </span>
               <span class="menu-item-body">
-                <span class="menu-item-row">
-                  <span class="menu-item-name">${itemL10n.name}</span>
-                  <span class="menu-item-dots" aria-hidden="true"></span>
-                  <span class="menu-item-price">${item.price}</span>
-                </span>
+                <span class="menu-item-name">${itemL10n.name}</span>
                 ${itemL10n.description ? `<span class="menu-item-desc">${itemL10n.description}</span>` : ""}
+                <span class="menu-item-foot">
+                  <span class="menu-item-price">${item.price}</span>
+                  ${favButtonHtml(favKey)}
+                </span>
               </span>
             </button>`;
             })
@@ -774,7 +786,7 @@
   }
 
   function filterMenu(query) {
-    const q = query.trim().toLowerCase();
+    const q = searchNormalize(query.trim());
     const favMode = activeCategory === "favorites";
     let visibleCount = 0;
 
@@ -782,7 +794,7 @@
       const catMatches = favMode || activeCategory === "all" || catEl.dataset.categoryId === activeCategory;
       let catVisible = 0;
       catEl.querySelectorAll(".menu-item").forEach((item) => {
-        const searchMatch = !q || item.dataset.name.includes(q) || item.dataset.desc.includes(q);
+        const searchMatch = !q || item.dataset.name.includes(q);
         const favMatch = !favMode || item.classList.contains("is-fav");
         const show = catMatches && searchMatch && favMatch;
         item.style.display = show ? "" : "none";

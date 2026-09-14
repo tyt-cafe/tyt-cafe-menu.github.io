@@ -206,7 +206,7 @@
       if (!name || !message) {
         if (statusEl) {
           statusEl.classList.add("is-error");
-          statusEl.textContent = tt("comments.errorFields", "Please fill in your name and comment.");
+          statusEl.textContent = tt("comments.errorFields", "Please fill in your name and review.");
         }
         return;
       }
@@ -238,7 +238,7 @@
         setRating(0);
         if (statusEl) {
           statusEl.classList.remove("is-error");
-          statusEl.textContent = tt("comments.success", "Thanks! Your comment has been posted.");
+          statusEl.textContent = tt("comments.success", "Thanks! Your review has been posted.");
         }
       } catch (err) {
         console.info("TYT Comments: failed to post.", err);

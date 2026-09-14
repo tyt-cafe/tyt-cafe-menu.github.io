@@ -108,7 +108,9 @@ textarea{min-height:90px;resize:vertical}
 </div>
 <div class="grid" style="margin-top:14px">
 <div class="full"><label>اسم الصنف</label><input id="mEditName" required></div>
+<div class="full"><label>الاسم بالعربي (اختياري)</label><input id="mEditNameAr" placeholder="مثال: كابتشينو"></div>
 <div class="full"><label>الوصف / المكونات</label><textarea id="mEditDesc"></textarea></div>
+<div class="full"><label>الوصف بالعربي (اختياري)</label><textarea id="mEditDescAr" placeholder="لو سبته فاضي، الوصف هيفضل إنجليزي حتى لو اللغة عربي"></textarea></div>
 <div><label>السعر</label><input id="mNewPrice" inputmode="decimal" required></div>
 <div><label>القسم</label><select id="mCategorySelect"></select></div>
 <div><label>الشارة (Badge)</label><select id="mBadgeSelect">
@@ -145,6 +147,8 @@ textarea{min-height:90px;resize:vertical}
 <div class="grid" style="margin-top:14px">
 <div><label>اسم الصنف</label><input id="mName" required></div><div><label>السعر</label><input id="mPrice" required></div>
 <div><label>القسم</label><select id="mCategory" required></select></div><div><label>الوصف</label><input id="mDesc"></div>
+<div><label>الاسم بالعربي (اختياري)</label><input id="mNameAr" placeholder="مثال: كابتشينو"></div>
+<div><label>الوصف بالعربي (اختياري)</label><input id="mDescAr" placeholder="لو سبته فاضي، الوصف هيفضل إنجليزي حتى لو اللغة عربي"></div>
 <div><label>الشارة (Badge)</label><select id="mAddBadge">
 <option value="none">بدون شارة (None)</option>
 <option value="new">جديد (New)</option>
@@ -606,7 +610,9 @@ function selectItem(it){
  $("mEditorName").textContent=it.name;
  $("mEditorMeta").textContent=`${it.category}${it.isBase?" · من المنيو الأصلية":" · مضاف من الإدارة"}`;
  $("mEditName").value=it.name||"";
+ $("mEditNameAr").value=it.nameAr||"";
  $("mEditDesc").value=it.description||"";
+ $("mEditDescAr").value=it.descriptionAr||"";
  $("mNewPrice").value=it.price??"";
  $("mEditImage").value=it.image||"";
  setImagePreview("mEditImagePreview",it.image||"");
@@ -625,7 +631,9 @@ function clearSelection(){
  SELECTED_ITEM=null;
  $("mEditorCard").classList.add("hidden");
  $("mEditName").value="";
+ $("mEditNameAr").value="";
  $("mEditDesc").value="";
+ $("mEditDescAr").value="";
  $("mNewPrice").value="";
  $("mEditImage").value="";
  setImagePreview("mEditImagePreview","");
@@ -649,10 +657,12 @@ $("mSaveAll").onclick=async()=>{
  if(!SELECTED_ITEM)return;
  const it=SELECTED_ITEM;
  const name=$("mEditName").value.trim();
+ const nameAr=$("mEditNameAr").value.trim();
  const price=$("mNewPrice").value.trim();
  if(!name){setMsg("mEditorMsg","اكتب اسم الصنف",true);return}
  if(!price){setMsg("mEditorMsg","اكتب السعر",true);return}
  const description=$("mEditDesc").value.trim();
+ const descriptionAr=$("mEditDescAr").value.trim();
  const image=$("mEditImage").value.trim();
  const badge=$("mBadgeSelect").value||"none";
  const selectedCategoryId=$("mCategorySelect").value||it.categoryId||"";
@@ -660,15 +670,15 @@ $("mSaveAll").onclick=async()=>{
  const offerId=$("mOfferSelect").value||"";
  const offerName=offerId?(OFFERS_CACHE.find(o=>o.id===offerId)?.name||""):"";
  const payload={
-  name,category:selectedCategory?.name||it.category,categoryId:selectedCategoryId,
-  price,description,image,badge,offerId,offerName,
+  name,nameAr,category:selectedCategory?.name||it.category,categoryId:selectedCategoryId,
+  price,description,descriptionAr,image,badge,offerId,offerName,
   sourceKey:it.sourceKey,deleted:false,
   ...(it.isBase?{originalName:it.baseData.originalName}:{})
  };
  try{
   if(it.docId)await updateDoc(doc(db,"menu",it.docId),payload);
   else{const ref=await addDoc(collection(db,"menu"),payload);it.docId=ref.id}
-  Object.assign(it,{name,category:payload.category,categoryId:selectedCategoryId,price,description,image,badge,offerId,offerName});
+  Object.assign(it,{name,nameAr,category:payload.category,categoryId:selectedCategoryId,price,description,descriptionAr,image,badge,offerId,offerName});
   $("mEditorName").textContent=name;
   $("mEditorMeta").textContent=`${payload.category}${it.isBase?" · من المنيو الأصلية":" · مضاف من الإدارة"}`;
   setMsg("mEditorMsg","✓ تم حفظ كل التعديلات بنجاح");
@@ -724,7 +734,7 @@ $("menuForm").onsubmit=async e=>{
     item inside the exact existing category selected, and never creates
     a new one. */
  const addOfferId=$("mAddOfferSelect").value||"";
- const data={name:$("mName").value.trim(),price:$("mPrice").value.trim(),category:selectedCategory.name,categoryId:selectedCategory.id,description:$("mDesc").value.trim(),image:$("mImage").value.trim(),badge:$("mAddBadge").value||"none",offerId:addOfferId,offerName:addOfferId?(OFFERS_CACHE.find(o=>o.id===addOfferId)?.name||""):""};
+ const data={name:$("mName").value.trim(),nameAr:$("mNameAr").value.trim(),price:$("mPrice").value.trim(),category:selectedCategory.name,categoryId:selectedCategory.id,description:$("mDesc").value.trim(),descriptionAr:$("mDescAr").value.trim(),image:$("mImage").value.trim(),badge:$("mAddBadge").value||"none",offerId:addOfferId,offerName:addOfferId?(OFFERS_CACHE.find(o=>o.id===addOfferId)?.name||""):""};
  if(!data.name||!data.price){setMsg("mMsg","اكتب اسم الصنف والسعر",true);return}
  try{
   if(id)await updateDoc(doc(db,"menu",id),{...data,sourceKey:stableKey,deleted:false});
