@@ -34,6 +34,22 @@
       const el = pages[k];
       if (el) el.classList.toggle("is-active", k === key);
     });
+
+    // The menu/offers/comments sections sit at display:none until this
+    // switch. Any [data-reveal] content already rendered inside them
+    // (e.g. the menu categories, built while the section was hidden)
+    // was observed by the scroll-reveal IntersectionObserver while it
+    // had no layout box, so it never gets marked visible on its own —
+    // the whole section would stay blank. Force it visible the moment
+    // its page is switched to; content rendered later (after the page
+    // is already active) is unaffected and reveals normally on scroll.
+    const activeEl = pages[key];
+    if (activeEl) {
+      activeEl.querySelectorAll("[data-reveal]").forEach((el) => {
+        el.classList.add("is-visible", "in-view");
+      });
+    }
+
     if (!opts.skipScroll) {
       window.scrollTo({ top: 0, behavior: "auto" });
     }
