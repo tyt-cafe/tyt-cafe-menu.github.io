@@ -857,7 +857,15 @@ html[dir="rtl"] .mobile-menu.open a { transform: translateX(0); }
     radial-gradient(45% 45% at 4% 30%, rgba(155,93,229,0.16), transparent 60%);
   pointer-events: none;
 }
-.menu-section .container { position: relative; z-index: 1; }
+/* The Menu page is a flex column (see PAGE SWITCHER: `#menu.is-active`), and
+   `.container` is centred with `margin: 0 auto`. An auto margin on a flex
+   item's cross axis cancels `align-self: stretch`, so without an explicit
+   width the container shrink-wraps to its CONTENT and only then gets capped
+   by max-width. Its content is a grid of product photos, so the photos'
+   intrinsic sizes were setting the page width (1180px on a 390px phone, with
+   the overflow hidden by `html, body { overflow-x: hidden }`). Pin it to the
+   space the page actually has. */
+.menu-section .container { position: relative; z-index: 1; width: 100%; min-width: 0; }
 .menu-section .eyebrow { color: var(--secondary-light); }
 .menu-section .section-title { color: var(--text); }
 .menu-section .section-lede { color: var(--muted); }
@@ -1030,22 +1038,26 @@ html[dir="rtl"] .menu-search input { text-align: right; }
 }
 
 /* ---- Item cards: large top photo + name/price beneath, app-style grid ---- */
+/* `minmax(0, 1fr)` rather than plain `1fr`: `1fr` is `minmax(auto, 1fr)`, whose
+   automatic minimum is the card's min-content, so a card could force its
+   column wider than its share. `0` makes every column exactly 1/N of the row. */
 .menu-list {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
 }
 @media (min-width: 620px) {
-  .menu-list { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .menu-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 }
 @media (min-width: 980px) {
-  .menu-list { grid-template-columns: repeat(4, 1fr); }
+  .menu-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 .menu-item {
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-width: 0;
   border: none;
   border-radius: var(--radius-lg);
   background: transparent;
@@ -1073,7 +1085,9 @@ html[dir="rtl"] .menu-search input { text-align: right; }
    placeholder box pretending to be a broken image. */
 .menu-item-media {
   position: relative;
+  display: block;
   width: 100%;
+  min-width: 0;
   aspect-ratio: 4 / 5;
   flex-shrink: 0;
   overflow: hidden;
@@ -1086,9 +1100,15 @@ html[dir="rtl"] .menu-search input { text-align: right; }
   background: radial-gradient(circle at 32% 28%, rgba(59,29,92,0.35), rgba(23,16,31,0.15) 78%);
   border-radius: var(--radius-lg);
 }
+/* The icon/photo layer is taken out of flow and pinned to the tile with
+   `inset: 0`. The tile's size is therefore decided ONLY by `width: 100%` +
+   `aspect-ratio`; nothing inside it can contribute an intrinsic size, so a
+   640x1700 can photo and an 800x800 cup photo both get the same tile. This
+   also means the result no longer depends on how a given browser resolves a
+   percentage height against an aspect-ratio-derived parent height. */
 .menu-item-icon {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1099,11 +1119,27 @@ html[dir="rtl"] .menu-search input { text-align: right; }
 .menu-item-icon img {
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
+  object-position: center;
   transition: transform 0.5s var(--ease);
 }
 .menu-item:hover .menu-item-icon img { transform: scale(1.06); }
 .menu-item:hover .menu-item-icon { opacity: 1; }
+
+/* Phones (below the 3-column breakpoint). Desktop/tablet are unchanged.
+   - The card is a <button>; the global button reset clears its border and
+     background but not the browser's default 6px side padding, which insets
+     the photo from its column edge on both sides.
+   - Photos are `contain`ed in a fixed 4:5 tile, so a wide dessert (~2:1) is
+     shorter than the tile. Anchoring to the bottom keeps the product sitting
+     directly above its name instead of floating mid-tile; tall items (cups,
+     cans) already fill the tile height, so they are unaffected. */
+@media (max-width: 619px) {
+  .menu-item { padding: 0; }
+  .menu-item-icon img { object-position: center bottom; }
+}
 
 .menu-item-body {
   flex: 1;
@@ -1127,6 +1163,8 @@ html[dir="rtl"] .menu-search input { text-align: right; }
   line-height: 1.25;
   color: var(--text);
   letter-spacing: 0.002em;
+  min-width: 0;
+  overflow-wrap: break-word;
   transition: color 0.3s ease;
 }
 .menu-item:hover .menu-item-name { color: var(--secondary-light); }
