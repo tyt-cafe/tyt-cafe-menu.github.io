@@ -340,7 +340,23 @@
         const x = d.data();
         if (x.deleted !== true && x.active === true) REMOTE_OFFERS.push(x);
       });
+
+      /*
+       * Firebase can return category documents while the menu item
+       * documents are temporarily missing/incompatible. The old behavior
+       * then replaced the working bundled menu with empty categories.
+       * Only accept remote menu data when it contains actual items.
+       */
+      const remoteItemCount = REMOTE_MENU.reduce(
+        (sum, cat) => sum + (Array.isArray(cat.items) ? cat.items.length : 0),
+        0
+      );
+      if (remoteItemCount === 0 && typeof MENU_DATA !== "undefined") {
+        REMOTE_MENU = null;
+        console.info("TYT Firebase returned no usable menu items; keeping bundled menu data.");
+      }
     } catch (e) {
+      REMOTE_MENU = null;
       console.info("TYT Firebase data unavailable; using bundled data.", e);
     }
   }
@@ -354,11 +370,13 @@
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
           loadRemoteData().then(() => {
-            if (REMOTE_MENU) menuSource = REMOTE_MENU;
-            if (menuContainer) {
-              renderTabs();
-              renderMenu();
-              filterMenu(menuSearch.value);
+            if (REMOTE_MENU && REMOTE_MENU.some(cat => Array.isArray(cat.items) && cat.items.length > 0)) {
+              menuSource = REMOTE_MENU;
+              if (menuContainer) {
+                renderTabs();
+                renderMenu();
+                filterMenu(menuSearch ? menuSearch.value : "");
+              }
             }
             renderOffers();
           });
@@ -882,17 +900,32 @@
   };
 
   async function initDataDrivenSections() {
-    await loadRemoteData();
-    if (REMOTE_MENU) menuSource = REMOTE_MENU;
-    if (menuContainer) {
+    /* Render local menu immediately so the page never starts blank. */
+    if (menuContainer && typeof MENU_DATA !== "undefined") {
+      menuSource = MENU_DATA;
       renderTabs();
       bindMenuTabsListener();
       bindMenuTabsDragScrollListener();
       bindMenuSwipeListener();
       renderMenu();
-      filterMenu(menuSearch.value);
-      menuSearch.addEventListener("input", (e) => filterMenu(e.target.value));
+      filterMenu(menuSearch ? menuSearch.value : "");
+      if (menuSearch) {
+        menuSearch.addEventListener("input", (e) => filterMenu(e.target.value));
+      }
     }
+
+    await loadRemoteData();
+
+    /* Replace local data only when Firebase supplied a usable menu. */
+    if (REMOTE_MENU && REMOTE_MENU.some(cat => Array.isArray(cat.items) && cat.items.length > 0)) {
+      menuSource = REMOTE_MENU;
+      if (menuContainer) {
+        renderTabs();
+        renderMenu();
+        filterMenu(menuSearch ? menuSearch.value : "");
+      }
+    }
+
     renderOffers();
     startLiveMenuSync();
   }
